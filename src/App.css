@@ -1,0 +1,141 @@
+.login-shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  align-items: center;
+}
+
+.login-layout {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 24px;
+}
+
+.login-hero,
+.login-card {
+  border: 1px solid rgba(31, 51, 74, 0.1);
+  border-radius: 28px;
+  background: rgba(255, 252, 247, 0.88);
+  box-shadow: 0 24px 60px rgba(31, 51, 74, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.login-hero {
+  padding: 32px;
+  background:
+    linear-gradient(135deg, rgba(255, 211, 137, 0.94), rgba(255, 245, 221, 0.95)),
+    rgba(255, 252, 247, 0.88);
+}
+
+.login-card {
+  padding: 32px;
+}
+
+.login-eyebrow,
+.login-section-label {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.login-eyebrow {
+  color: #8f4c07;
+}
+
+.login-section-label {
+  color: #b86412;
+}
+
+.login-hero h1,
+.login-heading h2 {
+  margin: 0;
+  color: #163049;
+}
+
+.login-hero h1 {
+  font-size: clamp(2.6rem, 7vw, 5rem);
+  line-height: 0.92;
+}
+
+.login-hero p:last-child {
+  margin: 16px 0 0;
+  max-width: 640px;
+  color: #425468;
+}
+
+.login-form {
+  margin-top: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.login-field {
+  display: grid;
+  gap: 8px;
+  color: #2a3550;
+  font-weight: 700;
+}
+
+.login-field input {
+  width: 100%;
+  border: 1px solid rgba(31, 51, 74, 0.14);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #163049;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.login-field input:focus {
+  outline: none;
+  border-color: #d88b13;
+  box-shadow: 0 0 0 4px rgba(216, 139, 19, 0.15);
+  transform: translateY(-1px);
+}
+
+.login-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #163049, #2e5678);
+  color: #fffaf1;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 16px 30px rgba(22, 48, 73, 0.22);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+}
+
+@media (min-width: 860px) {
+  .login-layout {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: stretch;
+  }
+
+  .login-hero,
+  .login-card {
+    padding: 42px;
+  }
+}
+
+@media (max-width: 640px) {
+  .login-shell {
+    padding: 16px;
+  }
+
+  .login-hero,
+  .login-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .login-button {
+    width: 100%;
+  }
+}
