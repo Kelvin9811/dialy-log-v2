@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-dailylogv2-dev-33888-authRole",
+      "UnauthRoleArn": "arn:aws:iam::888577064026:role/amplify-dailylogv2-dev-33888-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::888577064026:role/amplify-dailylogv2-dev-33888-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-dailylogv2-dev-33888-deployment",
+      "UnauthRoleName": "amplify-dailylogv2-dev-33888-unauthRole",
+      "StackName": "amplify-dailylogv2-dev-33888",
+      "StackId": "arn:aws:cloudformation:us-east-1:888577064026:stack/amplify-dailylogv2-dev-33888/bbd56f10-39ef-11f1-93cc-0e0ac5c526c7",
+      "AmplifyAppId": "d1c23zk8uf1ymw"
+    },
+    "categories": {
+      "auth": {
+        "dailylogv22015003220150032": {}
+      }
+    }
+  }
+}
