@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { catalogDefinitions } from "../../data/dummyCatalogs.js";
+import { catalogDefinitions } from "../../data/catalogDefinitions.js";
 
 const dayNames = [
   "Domingo",

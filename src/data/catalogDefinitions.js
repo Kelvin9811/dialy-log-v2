@@ -1,38 +1,3 @@
-export const dummyCatalogs = {
-  clientes: [
-    { id: 1, name: "Cliente A" },
-    { id: 2, name: "Cliente B" },
-    { id: 3, name: "Empresa Central" },
-  ],
-  rutas: [
-    { id: 1, name: "Ruta Norte" },
-    { id: 2, name: "Ruta Centro" },
-    { id: 3, name: "Destino Sur" },
-  ],
-  subrutas: [
-    { id: 1, name: "Sucursal Quito" },
-    { id: 2, name: "Punto Mall" },
-    { id: 3, name: "Centro logistico" },
-  ],
-  responsables: [
-    { id: 1, name: "Carlos Mena" },
-    { id: 2, name: "Luis Perez" },
-    { id: 3, name: "Ana Torres" },
-  ],
-  estados: [
-    { id: 1, name: "Entregado" },
-    { id: 2, name: "Pendiente" },
-    { id: 3, name: "Contratado" },
-    { id: 4, name: "En ruta" },
-    { id: 5, name: "Cancelado" },
-  ],
-  vehiculos: [
-    { id: 1, name: "ABC-1234" },
-    { id: 2, name: "PDE-4567" },
-    { id: 3, name: "TZX-9080" },
-  ],
-};
-
 export const catalogDefinitions = [
   {
     key: "clientes",
