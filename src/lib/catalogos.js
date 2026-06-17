@@ -14,6 +14,10 @@ export const tipoToCatalogKey = Object.fromEntries(
   Object.entries(catalogKeyToTipo).map(([key, value]) => [value, key])
 );
 
+export const emptyCatalogs = Object.fromEntries(
+  Object.keys(catalogKeyToTipo).map((key) => [key, []])
+);
+
 export const mapCatalogoItemFromApi = (item) => ({
   id: item.id,
   name: item.nombre ?? "",
@@ -37,4 +41,21 @@ export async function fetchCatalogItemsByTipo(tipo) {
   const items = response.data?.catalogosPorTipo?.items ?? [];
 
   return items.filter(Boolean).map(mapCatalogoItemFromApi);
+}
+
+export async function fetchAllCatalogs() {
+  const entries = await Promise.all(
+    Object.entries(catalogKeyToTipo).map(async ([catalogKey, tipo]) => {
+      const items = await fetchCatalogItemsByTipo(tipo);
+
+      return [
+        catalogKey,
+        items
+          .filter((item) => item.activo !== false)
+          .sort((left, right) => left.name.localeCompare(right.name)),
+      ];
+    })
+  );
+
+  return Object.fromEntries(entries);
 }

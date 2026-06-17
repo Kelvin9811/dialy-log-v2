@@ -2,9 +2,11 @@ import SectionHeroCard from "./SectionHeroCard.jsx";
 
 function ContentPanel({
   catalogs,
+  catalogsError,
   currentSection,
   deleteRecordError,
   isDeletingRecord,
+  isLoadingCatalogs,
   isLoadingRecords,
   isSavingRecord,
   isUpdatingRecord,
@@ -24,9 +26,11 @@ function ContentPanel({
       <section className="content-grid">
         <SectionHeroCard
           catalogs={catalogs}
+          catalogsError={catalogsError}
           currentSection={currentSection}
           deleteRecordError={deleteRecordError}
           isDeletingRecord={isDeletingRecord}
+          isLoadingCatalogs={isLoadingCatalogs}
           isLoadingRecords={isLoadingRecords}
           isSavingRecord={isSavingRecord}
           isUpdatingRecord={isUpdatingRecord}

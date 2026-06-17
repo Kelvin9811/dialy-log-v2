@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import ContentPanel from "./components/control-panel/ContentPanel.jsx";
 import MobileMenuButton from "./components/control-panel/MobileMenuButton.jsx";
 import Sidebar from "./components/control-panel/Sidebar.jsx";
-import { dummyCatalogs } from "./data/dummyCatalogs.js";
 import { controlPanelSections } from "./data/controlPanelSections.js";
+import { emptyCatalogs, fetchAllCatalogs } from "./lib/catalogos.js";
 import {
   createViajeRecord,
   deleteViajeRecord,
@@ -25,7 +25,9 @@ function ControlPanel({ onLogout }) {
   const [updateRecordError, setUpdateRecordError] = useState("");
   const [isDeletingRecord, setIsDeletingRecord] = useState(false);
   const [deleteRecordError, setDeleteRecordError] = useState("");
-  const [catalogs, setCatalogs] = useState(dummyCatalogs);
+  const [catalogs, setCatalogs] = useState(emptyCatalogs);
+  const [isLoadingCatalogs, setIsLoadingCatalogs] = useState(true);
+  const [catalogsError, setCatalogsError] = useState("");
 
   const currentSection =
     controlPanelSections.find((section) => section.id === activeSection) ??
@@ -75,6 +77,42 @@ function ControlPanel({ onLogout }) {
     };
 
     loadViajes();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCatalogs = async () => {
+      setIsLoadingCatalogs(true);
+      setCatalogsError("");
+
+      try {
+        const loadedCatalogs = await fetchAllCatalogs();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setCatalogs(loadedCatalogs);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        setCatalogs(emptyCatalogs);
+        setCatalogsError("No se pudieron cargar los catalogos desde el API.");
+      } finally {
+        if (isMounted) {
+          setIsLoadingCatalogs(false);
+        }
+      }
+    };
+
+    loadCatalogs();
 
     return () => {
       isMounted = false;
@@ -186,9 +224,11 @@ function ControlPanel({ onLogout }) {
 
       <ContentPanel
         catalogs={catalogs}
+        catalogsError={catalogsError}
         currentSection={currentSection}
         deleteRecordError={deleteRecordError}
         isDeletingRecord={isDeletingRecord}
+        isLoadingCatalogs={isLoadingCatalogs}
         isLoadingRecords={isLoadingRecords}
         isSavingRecord={isSavingRecord}
         isUpdatingRecord={isUpdatingRecord}

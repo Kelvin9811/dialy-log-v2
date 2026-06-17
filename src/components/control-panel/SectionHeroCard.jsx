@@ -467,6 +467,8 @@ function ReportsPreview({
 
 function CatalogsManager({
   catalogs,
+  catalogsError,
+  isLoadingCatalogs,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onUpdateCatalogItem,
@@ -499,6 +501,11 @@ function CatalogsManager({
 
   return (
     <div className="catalogs-manager">
+      {isLoadingCatalogs ? <p className="status-message">Cargando catalogos...</p> : null}
+      {!isLoadingCatalogs && catalogsError ? (
+        <p className="status-message error">{catalogsError}</p>
+      ) : null}
+
       <div className="catalog-tabs">
         {catalogDefinitions.map((catalog) => (
           <button
@@ -594,9 +601,11 @@ function CatalogsManager({
 
 function SectionHeroCard({
   catalogs,
+  catalogsError,
   currentSection,
   deleteRecordError,
   isDeletingRecord,
+  isLoadingCatalogs,
   isLoadingRecords,
   isSavingRecord,
   isUpdatingRecord,
@@ -696,6 +705,10 @@ function SectionHeroCard({
 
       {isHomeSection ? (
         <div className="quick-entry">
+          {isLoadingCatalogs ? <p className="status-message">Cargando catalogos...</p> : null}
+          {!isLoadingCatalogs && catalogsError ? (
+            <p className="status-message error">{catalogsError}</p>
+          ) : null}
           {saveRecordError ? <p className="status-message error">{saveRecordError}</p> : null}
 
           <form className="registro-form" onSubmit={handleSubmit}>
@@ -838,6 +851,8 @@ function SectionHeroCard({
       {isCatalogsSection ? (
         <CatalogsManager
           catalogs={catalogs}
+          catalogsError={catalogsError}
+          isLoadingCatalogs={isLoadingCatalogs}
           onCreateCatalogItem={onCreateCatalogItem}
           onDeleteCatalogItem={onDeleteCatalogItem}
           onUpdateCatalogItem={onUpdateCatalogItem}
