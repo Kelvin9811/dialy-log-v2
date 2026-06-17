@@ -4,6 +4,7 @@ function ContentPanel({
   catalogs,
   currentSection,
   isLoadingRecords,
+  isSavingRecord,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onDeleteRecord,
@@ -12,6 +13,7 @@ function ContentPanel({
   onUpdateRecord,
   recordsError,
   records,
+  saveRecordError,
 }) {
   return (
     <section className="content-panel">
@@ -20,11 +22,13 @@ function ContentPanel({
           catalogs={catalogs}
           currentSection={currentSection}
           isLoadingRecords={isLoadingRecords}
+          isSavingRecord={isSavingRecord}
           onCreateCatalogItem={onCreateCatalogItem}
           onDeleteCatalogItem={onDeleteCatalogItem}
           onDeleteRecord={onDeleteRecord}
           records={records}
           recordsError={recordsError}
+          saveRecordError={saveRecordError}
           onSaveRecord={onSaveRecord}
           onUpdateCatalogItem={onUpdateCatalogItem}
           onUpdateRecord={onUpdateRecord}

@@ -566,6 +566,7 @@ function SectionHeroCard({
   catalogs,
   currentSection,
   isLoadingRecords,
+  isSavingRecord,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onDeleteRecord,
@@ -574,6 +575,7 @@ function SectionHeroCard({
   onUpdateRecord,
   records = [],
   recordsError,
+  saveRecordError,
 }) {
   const isHomeSection = currentSection.id === "inicio";
   const isReportsSection = currentSection.id === "reportes";
@@ -616,7 +618,7 @@ function SectionHeroCard({
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const record = {
@@ -645,8 +647,12 @@ function SectionHeroCard({
       ),
     };
 
-    onSaveRecord?.(record);
-    setFormValues(getInitialFormValues());
+    try {
+      await onSaveRecord?.(record);
+      setFormValues(getInitialFormValues());
+    } catch (error) {
+      // The error message is rendered by the parent container.
+    }
   };
 
   return (
@@ -656,6 +662,8 @@ function SectionHeroCard({
 
       {isHomeSection ? (
         <div className="quick-entry">
+          {saveRecordError ? <p className="status-message error">{saveRecordError}</p> : null}
+
           <form className="registro-form" onSubmit={handleSubmit}>
             <div className="registro-form-grid">
               <label className="form-field">
@@ -770,8 +778,8 @@ function SectionHeroCard({
             </div>
 
             <div className="form-actions">
-              <button className="primary-action" type="submit">
-                Guardar registro
+              <button className="primary-action" type="submit" disabled={isSavingRecord}>
+                {isSavingRecord ? "Guardando..." : "Guardar registro"}
               </button>
             </div>
           </form>

@@ -1,5 +1,6 @@
 import amplifyApiClient from "./amplifyApi.js";
 import { listViajes } from "../graphql/queries.js";
+import { createViaje } from "../graphql/mutations.js";
 
 const mapViajeFromApi = (viaje) => ({
   id: viaje.id,
@@ -42,6 +43,67 @@ export async function fetchViajes() {
   const items = response.data?.listViajes?.items ?? [];
 
   return sortViajesByFechaDesc(items.filter(Boolean).map(mapViajeFromApi));
+}
+
+const toNullableString = (value) => {
+  const trimmedValue = value?.trim?.() ?? "";
+
+  return trimmedValue ? trimmedValue : null;
+};
+
+const toNullableFloat = (value) => {
+  const trimmedValue = value?.trim?.() ?? "";
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const parsedValue = Number.parseFloat(trimmedValue);
+
+  return Number.isNaN(parsedValue) ? null : parsedValue;
+};
+
+const toNullableInt = (value) => {
+  const trimmedValue = value?.trim?.() ?? "";
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const parsedValue = Number.parseInt(trimmedValue, 10);
+
+  return Number.isNaN(parsedValue) ? null : parsedValue;
+};
+
+const mapViajeToCreateInput = (viaje) => ({
+  fecha: viaje.fecha,
+  dia: toNullableString(viaje.dia),
+  clienteEmpresa: viaje.clienteEmpresa.trim(),
+  rutaDestino: viaje.rutaDestino.trim(),
+  subrutaPuntoLocal: toNullableString(viaje.subrutaPuntoLocal),
+  responsableAsignado: toNullableString(viaje.responsableAsignado),
+  estado: viaje.estado.trim(),
+  observaciones: toNullableString(viaje.observaciones),
+  valorMonto: toNullableFloat(viaje.valorMonto),
+  numeroPedidos: toNullableInt(viaje.numeroPedidos),
+  placaVehiculo: toNullableString(viaje.placaVehiculo),
+});
+
+export async function createViajeRecord(viaje) {
+  const response = await amplifyApiClient.graphql({
+    query: createViaje,
+    variables: {
+      input: mapViajeToCreateInput(viaje),
+    },
+  });
+
+  const createdViaje = response.data?.createViaje;
+
+  if (!createdViaje) {
+    throw new Error("No se recibio la respuesta esperada al crear el viaje.");
+  }
+
+  return mapViajeFromApi(createdViaje);
 }
 
 export { mapViajeFromApi };

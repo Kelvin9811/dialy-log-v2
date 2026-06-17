@@ -4,7 +4,7 @@ import MobileMenuButton from "./components/control-panel/MobileMenuButton.jsx";
 import Sidebar from "./components/control-panel/Sidebar.jsx";
 import { dummyCatalogs } from "./data/dummyCatalogs.js";
 import { controlPanelSections } from "./data/controlPanelSections.js";
-import { fetchViajes } from "./lib/viajes.js";
+import { createViajeRecord, fetchViajes } from "./lib/viajes.js";
 import "./ControlPanel.css";
 
 function ControlPanel({ onLogout }) {
@@ -14,6 +14,8 @@ function ControlPanel({ onLogout }) {
   const [records, setRecords] = useState([]);
   const [recordsError, setRecordsError] = useState("");
   const [isLoadingRecords, setIsLoadingRecords] = useState(true);
+  const [isSavingRecord, setIsSavingRecord] = useState(false);
+  const [saveRecordError, setSaveRecordError] = useState("");
   const [catalogs, setCatalogs] = useState(dummyCatalogs);
 
   const currentSection =
@@ -70,15 +72,21 @@ function ControlPanel({ onLogout }) {
     };
   }, []);
 
-  const handleSaveRecord = (record) => {
-    setRecords((current) => [
-      {
-        ...record,
-        id: Date.now(),
-      },
-      ...current,
-    ]);
-    setActiveSection("reportes");
+  const handleSaveRecord = async (record) => {
+    setIsSavingRecord(true);
+    setSaveRecordError("");
+
+    try {
+      const createdRecord = await createViajeRecord(record);
+
+      setRecords((current) => [createdRecord, ...current]);
+      setActiveSection("reportes");
+    } catch (error) {
+      setSaveRecordError("No se pudo guardar el viaje en el API.");
+      throw error;
+    } finally {
+      setIsSavingRecord(false);
+    }
   };
 
   const handleDeleteRecord = (recordId) => {
@@ -149,8 +157,10 @@ function ControlPanel({ onLogout }) {
         catalogs={catalogs}
         currentSection={currentSection}
         isLoadingRecords={isLoadingRecords}
+        isSavingRecord={isSavingRecord}
         recordsError={recordsError}
         records={records}
+        saveRecordError={saveRecordError}
         onCreateCatalogItem={handleCreateCatalogItem}
         onDeleteCatalogItem={handleDeleteCatalogItem}
         onDeleteRecord={handleDeleteRecord}
