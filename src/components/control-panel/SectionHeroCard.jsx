@@ -112,13 +112,18 @@ function SelectOrInputField({
 }
 
 function EditRecordModal({
+  clientOptions,
   editValues,
   isUpdatingRecord,
   onChange,
   onClose,
-  onSubmit,
+  responsibleOptions,
+  routeOptions,
   statusOptions,
+  subrouteOptions,
+  onSubmit,
   updateRecordError,
+  vehicleOptions,
 }) {
   if (!editValues) {
     return null;
@@ -152,42 +157,58 @@ function EditRecordModal({
 
             <label className="form-field">
               <span>Cliente / empresa</span>
-              <input
-                name="clienteEmpresa"
-                type="text"
-                value={editValues.clienteEmpresa}
-                onChange={onChange}
-              />
+              <select name="clienteEmpresa" value={editValues.clienteEmpresa} onChange={onChange}>
+                <option value="">Selecciona una opcion</option>
+                {clientOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-field">
               <span>Ruta o destino</span>
-              <input
-                name="rutaDestino"
-                type="text"
-                value={editValues.rutaDestino}
-                onChange={onChange}
-              />
+              <select name="rutaDestino" value={editValues.rutaDestino} onChange={onChange}>
+                <option value="">Selecciona una opcion</option>
+                {routeOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-field">
               <span>Subruta / punto / local</span>
-              <input
+              <select
                 name="subrutaPuntoLocal"
-                type="text"
                 value={editValues.subrutaPuntoLocal}
                 onChange={onChange}
-              />
+              >
+                <option value="">Selecciona una opcion</option>
+                {subrouteOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-field">
               <span>Responsable / conductor / persona asignada</span>
-              <input
+              <select
                 name="responsableAsignado"
-                type="text"
                 value={editValues.responsableAsignado}
                 onChange={onChange}
-              />
+              >
+                <option value="">Selecciona una opcion</option>
+                {responsibleOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-field">
@@ -228,12 +249,14 @@ function EditRecordModal({
 
             <label className="form-field">
               <span>Placa del vehiculo</span>
-              <input
-                name="placaVehiculo"
-                type="text"
-                value={editValues.placaVehiculo}
-                onChange={onChange}
-              />
+              <select name="placaVehiculo" value={editValues.placaVehiculo} onChange={onChange}>
+                <option value="">Selecciona una opcion</option>
+                {vehicleOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-field form-field-wide">
@@ -259,6 +282,7 @@ function EditRecordModal({
 }
 
 function ReportsPreview({
+  clientOptions,
   deleteRecordError,
   isDeletingRecord,
   isLoadingRecords,
@@ -267,11 +291,16 @@ function ReportsPreview({
   onUpdateRecord,
   records,
   recordsError,
+  responsibleOptions,
+  routeOptions,
   statusOptions,
+  subrouteOptions,
   updateRecordError,
+  vehicleOptions,
 }) {
   const [filters, setFilters] = useState({
-    fecha: "",
+    fechaInicio: "",
+    fechaFin: "",
     cliente: "",
     placa: "",
   });
@@ -279,7 +308,8 @@ function ReportsPreview({
 
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
-      const matchesFecha = !filters.fecha || record.fecha === filters.fecha;
+      const matchesFechaInicio = !filters.fechaInicio || record.fecha >= filters.fechaInicio;
+      const matchesFechaFin = !filters.fechaFin || record.fecha <= filters.fechaFin;
       const matchesCliente =
         !filters.cliente ||
         (record.clienteEmpresa ?? "")
@@ -289,7 +319,7 @@ function ReportsPreview({
         !filters.placa ||
         (record.placaVehiculo ?? "").toLowerCase().includes(filters.placa.trim().toLowerCase());
 
-      return matchesFecha && matchesCliente && matchesPlaca;
+      return matchesFechaInicio && matchesFechaFin && matchesCliente && matchesPlaca;
     });
   }, [filters, records]);
 
@@ -299,6 +329,18 @@ function ReportsPreview({
     setFilters((current) => ({
       ...current,
       [name]: value,
+      ...(name === "fechaInicio" &&
+      current.fechaFin &&
+      value &&
+      value > current.fechaFin
+        ? { fechaFin: value }
+        : {}),
+      ...(name === "fechaFin" &&
+      current.fechaInicio &&
+      value &&
+      value < current.fechaInicio
+        ? { fechaInicio: value }
+        : {}),
     }));
   };
 
@@ -341,11 +383,23 @@ function ReportsPreview({
 
       <div className="reports-filters">
         <label className="form-field">
-          <span>Filtrar por fecha</span>
+          <span>Fecha desde</span>
           <input
-            name="fecha"
+            name="fechaInicio"
             type="date"
-            value={filters.fecha}
+            max={filters.fechaFin || undefined}
+            value={filters.fechaInicio}
+            onChange={handleFilterChange}
+          />
+        </label>
+
+        <label className="form-field">
+          <span>Fecha hasta</span>
+          <input
+            name="fechaFin"
+            type="date"
+            min={filters.fechaInicio || undefined}
+            value={filters.fechaFin}
             onChange={handleFilterChange}
           />
         </label>
@@ -453,13 +507,18 @@ function ReportsPreview({
       </div>
 
       <EditRecordModal
+        clientOptions={clientOptions}
         editValues={editingRecord}
         isUpdatingRecord={isUpdatingRecord}
         onChange={handleEditChange}
         onClose={() => setEditingRecord(null)}
+        responsibleOptions={responsibleOptions}
+        routeOptions={routeOptions}
         onSubmit={handleEditSubmit}
         statusOptions={statusOptions}
+        subrouteOptions={subrouteOptions}
         updateRecordError={updateRecordError}
+        vehicleOptions={vehicleOptions}
       />
     </div>
   );
@@ -853,6 +912,7 @@ function SectionHeroCard({
 
       {isReportsSection ? (
         <ReportsPreview
+          clientOptions={(catalogs.clientes ?? []).map((item) => item.name)}
           deleteRecordError={deleteRecordError}
           isDeletingRecord={isDeletingRecord}
           isLoadingRecords={isLoadingRecords}
@@ -861,8 +921,12 @@ function SectionHeroCard({
           onDeleteRecord={onDeleteRecord}
           onUpdateRecord={onUpdateRecord}
           recordsError={recordsError}
+          responsibleOptions={(catalogs.responsables ?? []).map((item) => item.name)}
+          routeOptions={(catalogs.rutas ?? []).map((item) => item.name)}
           statusOptions={(catalogs.estados ?? []).map((item) => item.name)}
+          subrouteOptions={(catalogs.subrutas ?? []).map((item) => item.name)}
           updateRecordError={updateRecordError}
+          vehicleOptions={(catalogs.vehiculos ?? []).map((item) => item.name)}
         />
       ) : null}
 
