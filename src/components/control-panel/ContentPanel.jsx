@@ -3,8 +3,11 @@ import SectionHeroCard from "./SectionHeroCard.jsx";
 function ContentPanel({
   catalogs,
   currentSection,
+  deleteRecordError,
+  isDeletingRecord,
   isLoadingRecords,
   isSavingRecord,
+  isUpdatingRecord,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onDeleteRecord,
@@ -14,6 +17,7 @@ function ContentPanel({
   recordsError,
   records,
   saveRecordError,
+  updateRecordError,
 }) {
   return (
     <section className="content-panel">
@@ -21,14 +25,18 @@ function ContentPanel({
         <SectionHeroCard
           catalogs={catalogs}
           currentSection={currentSection}
+          deleteRecordError={deleteRecordError}
+          isDeletingRecord={isDeletingRecord}
           isLoadingRecords={isLoadingRecords}
           isSavingRecord={isSavingRecord}
+          isUpdatingRecord={isUpdatingRecord}
           onCreateCatalogItem={onCreateCatalogItem}
           onDeleteCatalogItem={onDeleteCatalogItem}
           onDeleteRecord={onDeleteRecord}
           records={records}
           recordsError={recordsError}
           saveRecordError={saveRecordError}
+          updateRecordError={updateRecordError}
           onSaveRecord={onSaveRecord}
           onUpdateCatalogItem={onUpdateCatalogItem}
           onUpdateRecord={onUpdateRecord}

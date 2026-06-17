@@ -4,7 +4,12 @@ import MobileMenuButton from "./components/control-panel/MobileMenuButton.jsx";
 import Sidebar from "./components/control-panel/Sidebar.jsx";
 import { dummyCatalogs } from "./data/dummyCatalogs.js";
 import { controlPanelSections } from "./data/controlPanelSections.js";
-import { createViajeRecord, fetchViajes } from "./lib/viajes.js";
+import {
+  createViajeRecord,
+  deleteViajeRecord,
+  fetchViajes,
+  updateViajeRecord,
+} from "./lib/viajes.js";
 import "./ControlPanel.css";
 
 function ControlPanel({ onLogout }) {
@@ -16,6 +21,10 @@ function ControlPanel({ onLogout }) {
   const [isLoadingRecords, setIsLoadingRecords] = useState(true);
   const [isSavingRecord, setIsSavingRecord] = useState(false);
   const [saveRecordError, setSaveRecordError] = useState("");
+  const [isUpdatingRecord, setIsUpdatingRecord] = useState(false);
+  const [updateRecordError, setUpdateRecordError] = useState("");
+  const [isDeletingRecord, setIsDeletingRecord] = useState(false);
+  const [deleteRecordError, setDeleteRecordError] = useState("");
   const [catalogs, setCatalogs] = useState(dummyCatalogs);
 
   const currentSection =
@@ -89,14 +98,36 @@ function ControlPanel({ onLogout }) {
     }
   };
 
-  const handleDeleteRecord = (recordId) => {
-    setRecords((current) => current.filter((record) => record.id !== recordId));
+  const handleDeleteRecord = async (recordId) => {
+    setIsDeletingRecord(true);
+    setDeleteRecordError("");
+
+    try {
+      const deletedId = await deleteViajeRecord(recordId);
+      setRecords((current) => current.filter((record) => record.id !== deletedId));
+    } catch (error) {
+      setDeleteRecordError("No se pudo eliminar el viaje del API.");
+      throw error;
+    } finally {
+      setIsDeletingRecord(false);
+    }
   };
 
-  const handleUpdateRecord = (updatedRecord) => {
-    setRecords((current) =>
-      current.map((record) => (record.id === updatedRecord.id ? updatedRecord : record))
-    );
+  const handleUpdateRecord = async (updatedRecord) => {
+    setIsUpdatingRecord(true);
+    setUpdateRecordError("");
+
+    try {
+      const savedRecord = await updateViajeRecord(updatedRecord);
+      setRecords((current) =>
+        current.map((record) => (record.id === savedRecord.id ? savedRecord : record))
+      );
+    } catch (error) {
+      setUpdateRecordError("No se pudo actualizar el viaje en el API.");
+      throw error;
+    } finally {
+      setIsUpdatingRecord(false);
+    }
   };
 
   const handleCreateCatalogItem = (catalogKey, itemName) => {
@@ -156,11 +187,15 @@ function ControlPanel({ onLogout }) {
       <ContentPanel
         catalogs={catalogs}
         currentSection={currentSection}
+        deleteRecordError={deleteRecordError}
+        isDeletingRecord={isDeletingRecord}
         isLoadingRecords={isLoadingRecords}
         isSavingRecord={isSavingRecord}
+        isUpdatingRecord={isUpdatingRecord}
         recordsError={recordsError}
         records={records}
         saveRecordError={saveRecordError}
+        updateRecordError={updateRecordError}
         onCreateCatalogItem={handleCreateCatalogItem}
         onDeleteCatalogItem={handleDeleteCatalogItem}
         onDeleteRecord={handleDeleteRecord}

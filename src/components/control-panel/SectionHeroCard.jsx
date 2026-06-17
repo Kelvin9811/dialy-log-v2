@@ -111,7 +111,15 @@ function SelectOrInputField({
   );
 }
 
-function EditRecordModal({ editValues, onChange, onClose, onSubmit, statusOptions }) {
+function EditRecordModal({
+  editValues,
+  isUpdatingRecord,
+  onChange,
+  onClose,
+  onSubmit,
+  statusOptions,
+  updateRecordError,
+}) {
   if (!editValues) {
     return null;
   }
@@ -129,6 +137,8 @@ function EditRecordModal({ editValues, onChange, onClose, onSubmit, statusOption
         </div>
 
         <form className="registro-form" onSubmit={onSubmit}>
+          {updateRecordError ? <p className="status-message error">{updateRecordError}</p> : null}
+
           <div className="registro-form-grid">
             <label className="form-field">
               <span>Fecha</span>
@@ -238,8 +248,8 @@ function EditRecordModal({ editValues, onChange, onClose, onSubmit, statusOption
           </div>
 
           <div className="form-actions">
-            <button className="primary-action" type="submit">
-              Guardar cambios
+            <button className="primary-action" type="submit" disabled={isUpdatingRecord}>
+              {isUpdatingRecord ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
         </form>
@@ -249,12 +259,16 @@ function EditRecordModal({ editValues, onChange, onClose, onSubmit, statusOption
 }
 
 function ReportsPreview({
+  deleteRecordError,
+  isDeletingRecord,
   isLoadingRecords,
+  isUpdatingRecord,
   onDeleteRecord,
   onUpdateRecord,
   records,
   recordsError,
   statusOptions,
+  updateRecordError,
 }) {
   const [filters, setFilters] = useState({
     fecha: "",
@@ -297,20 +311,33 @@ function ReportsPreview({
     }));
   };
 
-  const handleEditSubmit = (event) => {
+  const handleEditSubmit = async (event) => {
     event.preventDefault();
 
-    onUpdateRecord?.({
-      ...editingRecord,
-      dia: getDayFromDate(editingRecord.fecha),
-    });
-    setEditingRecord(null);
+    try {
+      await onUpdateRecord?.({
+        ...editingRecord,
+        dia: getDayFromDate(editingRecord.fecha),
+      });
+      setEditingRecord(null);
+    } catch (error) {
+      // Error is rendered in the modal.
+    }
+  };
+
+  const handleDelete = async (recordId) => {
+    try {
+      await onDeleteRecord?.(recordId);
+    } catch (error) {
+      // Error is rendered in the reports view.
+    }
   };
 
   return (
     <div className="reports-preview">
       {isLoadingRecords ? <p className="status-message">Cargando viajes...</p> : null}
       {!isLoadingRecords && recordsError ? <p className="status-message error">{recordsError}</p> : null}
+      {deleteRecordError ? <p className="status-message error">{deleteRecordError}</p> : null}
 
       <div className="reports-filters">
         <label className="form-field">
@@ -386,9 +413,10 @@ function ReportsPreview({
                     <button
                       className="icon-action delete-action"
                       type="button"
-                      onClick={() => onDeleteRecord?.(record.id)}
+                      disabled={isDeletingRecord}
+                      onClick={() => handleDelete(record.id)}
                     >
-                      X
+                      {isDeletingRecord ? "..." : "X"}
                     </button>
                   </div>
                 </td>
@@ -426,10 +454,12 @@ function ReportsPreview({
 
       <EditRecordModal
         editValues={editingRecord}
+        isUpdatingRecord={isUpdatingRecord}
         onChange={handleEditChange}
         onClose={() => setEditingRecord(null)}
         onSubmit={handleEditSubmit}
         statusOptions={statusOptions}
+        updateRecordError={updateRecordError}
       />
     </div>
   );
@@ -565,8 +595,11 @@ function CatalogsManager({
 function SectionHeroCard({
   catalogs,
   currentSection,
+  deleteRecordError,
+  isDeletingRecord,
   isLoadingRecords,
   isSavingRecord,
+  isUpdatingRecord,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onDeleteRecord,
@@ -576,6 +609,7 @@ function SectionHeroCard({
   records = [],
   recordsError,
   saveRecordError,
+  updateRecordError,
 }) {
   const isHomeSection = currentSection.id === "inicio";
   const isReportsSection = currentSection.id === "reportes";
@@ -788,12 +822,16 @@ function SectionHeroCard({
 
       {isReportsSection ? (
         <ReportsPreview
+          deleteRecordError={deleteRecordError}
+          isDeletingRecord={isDeletingRecord}
           isLoadingRecords={isLoadingRecords}
+          isUpdatingRecord={isUpdatingRecord}
           records={records}
           onDeleteRecord={onDeleteRecord}
           onUpdateRecord={onUpdateRecord}
           recordsError={recordsError}
           statusOptions={(catalogs.estados ?? []).map((item) => item.name)}
+          updateRecordError={updateRecordError}
         />
       ) : null}
 

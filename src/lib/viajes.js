@@ -1,6 +1,6 @@
 import amplifyApiClient from "./amplifyApi.js";
 import { listViajes } from "../graphql/queries.js";
-import { createViaje } from "../graphql/mutations.js";
+import { createViaje, deleteViaje, updateViaje } from "../graphql/mutations.js";
 
 const mapViajeFromApi = (viaje) => ({
   id: viaje.id,
@@ -89,6 +89,11 @@ const mapViajeToCreateInput = (viaje) => ({
   placaVehiculo: toNullableString(viaje.placaVehiculo),
 });
 
+const mapViajeToUpdateInput = (viaje) => ({
+  id: viaje.id,
+  ...mapViajeToCreateInput(viaje),
+});
+
 export async function createViajeRecord(viaje) {
   const response = await amplifyApiClient.graphql({
     query: createViaje,
@@ -104,6 +109,40 @@ export async function createViajeRecord(viaje) {
   }
 
   return mapViajeFromApi(createdViaje);
+}
+
+export async function updateViajeRecord(viaje) {
+  const response = await amplifyApiClient.graphql({
+    query: updateViaje,
+    variables: {
+      input: mapViajeToUpdateInput(viaje),
+    },
+  });
+
+  const updatedViaje = response.data?.updateViaje;
+
+  if (!updatedViaje) {
+    throw new Error("No se recibio la respuesta esperada al actualizar el viaje.");
+  }
+
+  return mapViajeFromApi(updatedViaje);
+}
+
+export async function deleteViajeRecord(id) {
+  const response = await amplifyApiClient.graphql({
+    query: deleteViaje,
+    variables: {
+      input: { id },
+    },
+  });
+
+  const deletedViaje = response.data?.deleteViaje;
+
+  if (!deletedViaje) {
+    throw new Error("No se recibio la respuesta esperada al eliminar el viaje.");
+  }
+
+  return deletedViaje.id;
 }
 
 export { mapViajeFromApi };
