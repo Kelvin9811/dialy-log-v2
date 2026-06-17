@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "dailylogv22015003220150032": {}
+      },
+      "api": {
+        "dailylogv2": {}
       }
     }
   }

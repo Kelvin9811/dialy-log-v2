@@ -1,9 +1,35 @@
-# This "input" configures a global authorization rule to enable public access to
-# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+enum CatalogoTipo {
+  CLIENTE
+  RUTA
+  SUBRUTA
+  RESPONSABLE
+  ESTADO
+  VEHICULO
+}
 
-type Todo @model {
+type Viaje
+  @model
+  @auth(rules: [{ allow: owner }]) {
   id: ID!
-  name: String!
-  description: String
+  fecha: AWSDate! @index(name: "viajesPorFecha", queryField: "viajesPorFecha", sortKeyFields: ["estado"])
+  dia: String
+  clienteEmpresa: String!
+  rutaDestino: String!
+  subrutaPuntoLocal: String
+  responsableAsignado: String
+  estado: String! @index(name: "viajesPorEstado", queryField: "viajesPorEstado", sortKeyFields: ["fecha"])
+  observaciones: String
+  valorMonto: Float
+  numeroPedidos: Int
+  placaVehiculo: String
+}
+
+type CatalogoItem
+  @model
+  @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  tipo: CatalogoTipo! @index(name: "catalogosPorTipo", queryField: "catalogosPorTipo", sortKeyFields: ["nombre"])
+  nombre: String!
+  activo: Boolean
+  descripcion: String
 }
