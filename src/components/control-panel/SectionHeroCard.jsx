@@ -248,7 +248,14 @@ function EditRecordModal({ editValues, onChange, onClose, onSubmit, statusOption
   );
 }
 
-function ReportsPreview({ onDeleteRecord, onUpdateRecord, records, statusOptions }) {
+function ReportsPreview({
+  isLoadingRecords,
+  onDeleteRecord,
+  onUpdateRecord,
+  records,
+  recordsError,
+  statusOptions,
+}) {
   const [filters, setFilters] = useState({
     fecha: "",
     cliente: "",
@@ -302,6 +309,9 @@ function ReportsPreview({ onDeleteRecord, onUpdateRecord, records, statusOptions
 
   return (
     <div className="reports-preview">
+      {isLoadingRecords ? <p className="status-message">Cargando viajes...</p> : null}
+      {!isLoadingRecords && recordsError ? <p className="status-message error">{recordsError}</p> : null}
+
       <div className="reports-filters">
         <label className="form-field">
           <span>Filtrar por fecha</span>
@@ -387,7 +397,11 @@ function ReportsPreview({ onDeleteRecord, onUpdateRecord, records, statusOptions
             {filteredRecords.length === 0 ? (
               <tr>
                 <td colSpan="10" className="empty-report-cell">
-                  No hay registros que coincidan con los filtros.
+                  {isLoadingRecords
+                    ? "Cargando registros..."
+                    : recordsError
+                      ? "No fue posible cargar registros."
+                      : "No hay registros que coincidan con los filtros."}
                 </td>
               </tr>
             ) : null}
@@ -551,6 +565,7 @@ function CatalogsManager({
 function SectionHeroCard({
   catalogs,
   currentSection,
+  isLoadingRecords,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onDeleteRecord,
@@ -558,6 +573,7 @@ function SectionHeroCard({
   onUpdateCatalogItem,
   onUpdateRecord,
   records = [],
+  recordsError,
 }) {
   const isHomeSection = currentSection.id === "inicio";
   const isReportsSection = currentSection.id === "reportes";
@@ -764,9 +780,11 @@ function SectionHeroCard({
 
       {isReportsSection ? (
         <ReportsPreview
+          isLoadingRecords={isLoadingRecords}
           records={records}
           onDeleteRecord={onDeleteRecord}
           onUpdateRecord={onUpdateRecord}
+          recordsError={recordsError}
           statusOptions={(catalogs.estados ?? []).map((item) => item.name)}
         />
       ) : null}

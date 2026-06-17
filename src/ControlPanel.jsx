@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ContentPanel from "./components/control-panel/ContentPanel.jsx";
 import MobileMenuButton from "./components/control-panel/MobileMenuButton.jsx";
 import Sidebar from "./components/control-panel/Sidebar.jsx";
 import { dummyCatalogs } from "./data/dummyCatalogs.js";
 import { controlPanelSections } from "./data/controlPanelSections.js";
-import { dummyReports } from "./data/dummyReports.js";
+import { fetchViajes } from "./lib/viajes.js";
 import "./ControlPanel.css";
 
 function ControlPanel({ onLogout }) {
   const [activeSection, setActiveSection] = useState(controlPanelSections[0].id);
   const [isSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [records, setRecords] = useState(dummyReports);
+  const [records, setRecords] = useState([]);
+  const [recordsError, setRecordsError] = useState("");
+  const [isLoadingRecords, setIsLoadingRecords] = useState(true);
   const [catalogs, setCatalogs] = useState(dummyCatalogs);
 
   const currentSection =
@@ -31,6 +33,42 @@ function ControlPanel({ onLogout }) {
     setIsMobileMenuOpen(false);
     onLogout?.();
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadViajes = async () => {
+      setIsLoadingRecords(true);
+      setRecordsError("");
+
+      try {
+        const viajes = await fetchViajes();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setRecords(viajes);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        setRecords([]);
+        setRecordsError("No se pudieron cargar los viajes desde el API.");
+      } finally {
+        if (isMounted) {
+          setIsLoadingRecords(false);
+        }
+      }
+    };
+
+    loadViajes();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSaveRecord = (record) => {
     setRecords((current) => [
@@ -110,6 +148,8 @@ function ControlPanel({ onLogout }) {
       <ContentPanel
         catalogs={catalogs}
         currentSection={currentSection}
+        isLoadingRecords={isLoadingRecords}
+        recordsError={recordsError}
         records={records}
         onCreateCatalogItem={handleCreateCatalogItem}
         onDeleteCatalogItem={handleDeleteCatalogItem}

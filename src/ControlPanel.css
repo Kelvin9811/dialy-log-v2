@@ -337,6 +337,16 @@
   gap: 20px;
 }
 
+.status-message {
+  margin: 0;
+  color: #4b5d71;
+  font-weight: 600;
+}
+
+.status-message.error {
+  color: #9a2f2f;
+}
+
 .reports-filters {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
