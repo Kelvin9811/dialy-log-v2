@@ -468,7 +468,9 @@ function ReportsPreview({
 function CatalogsManager({
   catalogs,
   catalogsError,
+  catalogOperationError,
   isLoadingCatalogs,
+  isSavingCatalogItem,
   onCreateCatalogItem,
   onDeleteCatalogItem,
   onUpdateCatalogItem,
@@ -484,8 +486,11 @@ function CatalogsManager({
 
   const handleCreate = (event) => {
     event.preventDefault();
-    onCreateCatalogItem?.(activeCatalog.key, newItemName);
-    setNewItemName("");
+    Promise.resolve(onCreateCatalogItem?.(activeCatalog.key, newItemName))
+      .then(() => {
+        setNewItemName("");
+      })
+      .catch(() => {});
   };
 
   const handleStartEdit = (item) => {
@@ -494,9 +499,16 @@ function CatalogsManager({
   };
 
   const handleSaveEdit = (itemId) => {
-    onUpdateCatalogItem?.(activeCatalog.key, itemId, editingItemName);
-    setEditingItemId(null);
-    setEditingItemName("");
+    Promise.resolve(onUpdateCatalogItem?.(activeCatalog.key, itemId, editingItemName))
+      .then(() => {
+        setEditingItemId(null);
+        setEditingItemName("");
+      })
+      .catch(() => {});
+  };
+
+  const handleDelete = (itemId) => {
+    Promise.resolve(onDeleteCatalogItem?.(activeCatalog.key, itemId)).catch(() => {});
   };
 
   return (
@@ -505,6 +517,7 @@ function CatalogsManager({
       {!isLoadingCatalogs && catalogsError ? (
         <p className="status-message error">{catalogsError}</p>
       ) : null}
+      {catalogOperationError ? <p className="status-message error">{catalogOperationError}</p> : null}
 
       <div className="catalog-tabs">
         {catalogDefinitions.map((catalog) => (
@@ -543,8 +556,8 @@ function CatalogsManager({
               placeholder={`Agregar a ${activeCatalog.label.toLowerCase()}`}
             />
           </label>
-          <button className="primary-action" type="submit">
-            Agregar
+          <button className="primary-action" type="submit" disabled={isSavingCatalogItem}>
+            {isSavingCatalogItem ? "Guardando..." : "Agregar"}
           </button>
         </form>
 
@@ -569,14 +582,16 @@ function CatalogsManager({
                   <button
                     className="icon-action edit-action"
                     type="button"
+                    disabled={isSavingCatalogItem}
                     onClick={() => handleSaveEdit(item.id)}
                   >
-                    OK
+                    {isSavingCatalogItem ? "..." : "OK"}
                   </button>
                 ) : (
                   <button
                     className="icon-action edit-action"
                     type="button"
+                    disabled={isSavingCatalogItem}
                     onClick={() => handleStartEdit(item)}
                   >
                     E
@@ -586,9 +601,10 @@ function CatalogsManager({
                 <button
                   className="icon-action delete-action"
                   type="button"
-                  onClick={() => onDeleteCatalogItem?.(activeCatalog.key, item.id)}
+                  disabled={isSavingCatalogItem}
+                  onClick={() => handleDelete(item.id)}
                 >
-                  X
+                  {isSavingCatalogItem ? "..." : "X"}
                 </button>
               </div>
             </div>
@@ -602,11 +618,13 @@ function CatalogsManager({
 function SectionHeroCard({
   catalogs,
   catalogsError,
+  catalogOperationError,
   currentSection,
   deleteRecordError,
   isDeletingRecord,
   isLoadingCatalogs,
   isLoadingRecords,
+  isSavingCatalogItem,
   isSavingRecord,
   isUpdatingRecord,
   onCreateCatalogItem,
@@ -852,7 +870,9 @@ function SectionHeroCard({
         <CatalogsManager
           catalogs={catalogs}
           catalogsError={catalogsError}
+          catalogOperationError={catalogOperationError}
           isLoadingCatalogs={isLoadingCatalogs}
+          isSavingCatalogItem={isSavingCatalogItem}
           onCreateCatalogItem={onCreateCatalogItem}
           onDeleteCatalogItem={onDeleteCatalogItem}
           onUpdateCatalogItem={onUpdateCatalogItem}

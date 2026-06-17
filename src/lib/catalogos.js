@@ -1,5 +1,10 @@
 import amplifyApiClient from "./amplifyApi.js";
 import { catalogosPorTipo } from "../graphql/queries.js";
+import {
+  createCatalogoItem,
+  deleteCatalogoItem,
+  updateCatalogoItem,
+} from "../graphql/mutations.js";
 
 export const catalogKeyToTipo = {
   clientes: "CLIENTE",
@@ -58,4 +63,66 @@ export async function fetchAllCatalogs() {
   );
 
   return Object.fromEntries(entries);
+}
+
+export async function createCatalogItemRecord(catalogKey, itemName) {
+  const tipo = catalogKeyToTipo[catalogKey];
+
+  const response = await amplifyApiClient.graphql({
+    query: createCatalogoItem,
+    variables: {
+      input: {
+        tipo,
+        nombre: itemName.trim(),
+        activo: true,
+      },
+    },
+  });
+
+  const createdItem = response.data?.createCatalogoItem;
+
+  if (!createdItem) {
+    throw new Error("No se recibio la respuesta esperada al crear el catalogo.");
+  }
+
+  return mapCatalogoItemFromApi(createdItem);
+}
+
+export async function updateCatalogItemRecord(itemId, itemName) {
+  const response = await amplifyApiClient.graphql({
+    query: updateCatalogoItem,
+    variables: {
+      input: {
+        id: itemId,
+        nombre: itemName.trim(),
+      },
+    },
+  });
+
+  const updatedItem = response.data?.updateCatalogoItem;
+
+  if (!updatedItem) {
+    throw new Error("No se recibio la respuesta esperada al actualizar el catalogo.");
+  }
+
+  return mapCatalogoItemFromApi(updatedItem);
+}
+
+export async function deleteCatalogItemRecord(itemId) {
+  const response = await amplifyApiClient.graphql({
+    query: deleteCatalogoItem,
+    variables: {
+      input: {
+        id: itemId,
+      },
+    },
+  });
+
+  const deletedItem = response.data?.deleteCatalogoItem;
+
+  if (!deletedItem) {
+    throw new Error("No se recibio la respuesta esperada al eliminar el catalogo.");
+  }
+
+  return deletedItem.id;
 }

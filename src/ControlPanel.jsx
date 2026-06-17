@@ -3,7 +3,13 @@ import ContentPanel from "./components/control-panel/ContentPanel.jsx";
 import MobileMenuButton from "./components/control-panel/MobileMenuButton.jsx";
 import Sidebar from "./components/control-panel/Sidebar.jsx";
 import { controlPanelSections } from "./data/controlPanelSections.js";
-import { emptyCatalogs, fetchAllCatalogs } from "./lib/catalogos.js";
+import {
+  createCatalogItemRecord,
+  deleteCatalogItemRecord,
+  emptyCatalogs,
+  fetchAllCatalogs,
+  updateCatalogItemRecord,
+} from "./lib/catalogos.js";
 import {
   createViajeRecord,
   deleteViajeRecord,
@@ -28,6 +34,8 @@ function ControlPanel({ onLogout }) {
   const [catalogs, setCatalogs] = useState(emptyCatalogs);
   const [isLoadingCatalogs, setIsLoadingCatalogs] = useState(true);
   const [catalogsError, setCatalogsError] = useState("");
+  const [isSavingCatalogItem, setIsSavingCatalogItem] = useState(false);
+  const [catalogOperationError, setCatalogOperationError] = useState("");
 
   const currentSection =
     controlPanelSections.find((section) => section.id === activeSection) ??
@@ -168,45 +176,77 @@ function ControlPanel({ onLogout }) {
     }
   };
 
-  const handleCreateCatalogItem = (catalogKey, itemName) => {
+  const handleCreateCatalogItem = async (catalogKey, itemName) => {
     const trimmedName = itemName.trim();
 
     if (!trimmedName) {
       return;
     }
 
-    setCatalogs((current) => ({
-      ...current,
-      [catalogKey]: [
-        ...current[catalogKey],
-        {
-          id: Date.now(),
-          name: trimmedName,
-        },
-      ],
-    }));
+    setIsSavingCatalogItem(true);
+    setCatalogOperationError("");
+
+    try {
+      const createdItem = await createCatalogItemRecord(catalogKey, trimmedName);
+
+      setCatalogs((current) => ({
+        ...current,
+        [catalogKey]: [...current[catalogKey], createdItem].sort((left, right) =>
+          left.name.localeCompare(right.name)
+        ),
+      }));
+    } catch (error) {
+      setCatalogOperationError("No se pudo guardar el catalogo en el API.");
+      throw error;
+    } finally {
+      setIsSavingCatalogItem(false);
+    }
   };
 
-  const handleUpdateCatalogItem = (catalogKey, itemId, itemName) => {
+  const handleUpdateCatalogItem = async (catalogKey, itemId, itemName) => {
     const trimmedName = itemName.trim();
 
     if (!trimmedName) {
       return;
     }
 
-    setCatalogs((current) => ({
-      ...current,
-      [catalogKey]: current[catalogKey].map((item) =>
-        item.id === itemId ? { ...item, name: trimmedName } : item
-      ),
-    }));
+    setIsSavingCatalogItem(true);
+    setCatalogOperationError("");
+
+    try {
+      const updatedItem = await updateCatalogItemRecord(itemId, trimmedName);
+
+      setCatalogs((current) => ({
+        ...current,
+        [catalogKey]: current[catalogKey]
+          .map((item) => (item.id === itemId ? updatedItem : item))
+          .sort((left, right) => left.name.localeCompare(right.name)),
+      }));
+    } catch (error) {
+      setCatalogOperationError("No se pudo actualizar el catalogo en el API.");
+      throw error;
+    } finally {
+      setIsSavingCatalogItem(false);
+    }
   };
 
-  const handleDeleteCatalogItem = (catalogKey, itemId) => {
-    setCatalogs((current) => ({
-      ...current,
-      [catalogKey]: current[catalogKey].filter((item) => item.id !== itemId),
-    }));
+  const handleDeleteCatalogItem = async (catalogKey, itemId) => {
+    setIsSavingCatalogItem(true);
+    setCatalogOperationError("");
+
+    try {
+      const deletedItemId = await deleteCatalogItemRecord(itemId);
+
+      setCatalogs((current) => ({
+        ...current,
+        [catalogKey]: current[catalogKey].filter((item) => item.id !== deletedItemId),
+      }));
+    } catch (error) {
+      setCatalogOperationError("No se pudo eliminar el catalogo del API.");
+      throw error;
+    } finally {
+      setIsSavingCatalogItem(false);
+    }
   };
 
   return (
@@ -225,11 +265,13 @@ function ControlPanel({ onLogout }) {
       <ContentPanel
         catalogs={catalogs}
         catalogsError={catalogsError}
+        catalogOperationError={catalogOperationError}
         currentSection={currentSection}
         deleteRecordError={deleteRecordError}
         isDeletingRecord={isDeletingRecord}
         isLoadingCatalogs={isLoadingCatalogs}
         isLoadingRecords={isLoadingRecords}
+        isSavingCatalogItem={isSavingCatalogItem}
         isSavingRecord={isSavingRecord}
         isUpdatingRecord={isUpdatingRecord}
         recordsError={recordsError}
