@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "dailylogv2",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authdailylogv22015003220150032",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

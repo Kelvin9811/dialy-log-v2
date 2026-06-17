@@ -5,6 +5,14 @@
   align-items: center;
 }
 
+.auth-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 48px); /* account for padding */
+  padding: 24px;
+}
+
 .login-layout {
   width: min(1080px, 100%);
   margin: 0 auto;

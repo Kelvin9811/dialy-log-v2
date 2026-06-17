@@ -1,10 +1,8 @@
-import SidebarUser from "./SidebarUser.jsx";
 import SidebarNav from "./SidebarNav.jsx";
 import SidebarFooter from "./SidebarFooter.jsx";
 
 function Sidebar({
   activeSection,
-  activeUser,
   isMobileMenuOpen,
   isSidebarCollapsed,
   onLogout,
@@ -18,8 +16,6 @@ function Sidebar({
         isMobileMenuOpen ? "mobile-open" : ""
       }`}
     >
-      <SidebarUser activeUser={activeUser} />
-
       <SidebarNav
         sections={sections}
         activeSection={activeSection}

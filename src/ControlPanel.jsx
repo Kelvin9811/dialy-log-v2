@@ -7,7 +7,7 @@ import { controlPanelSections } from "./data/controlPanelSections.js";
 import { dummyReports } from "./data/dummyReports.js";
 import "./ControlPanel.css";
 
-function ControlPanel({ onLogout, activeUser }) {
+function ControlPanel({ onLogout }) {
   const [activeSection, setActiveSection] = useState(controlPanelSections[0].id);
   const [isSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,7 +101,6 @@ function ControlPanel({ onLogout, activeUser }) {
       <Sidebar
         sections={controlPanelSections}
         activeSection={activeSection}
-        activeUser={activeUser}
         isMobileMenuOpen={isMobileMenuOpen}
         isSidebarCollapsed={isSidebarCollapsed}
         onLogout={handleLogout}
