@@ -804,7 +804,10 @@ function SectionHeroCard({
 
     try {
       setRecordValidationError("");
-      await onSaveRecord?.(record);
+      const createdRecord = await onSaveRecord?.(record);
+      window.alert(
+        `Guardado de viaje al destino ${createdRecord?.rutaDestino ?? record.rutaDestino} exitoso.`
+      );
       setFormValues(getInitialFormValues());
     } catch (error) {
       // The error message is rendered by the parent container.

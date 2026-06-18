@@ -136,7 +136,7 @@ function ControlPanel({ onLogout }) {
       const createdRecord = await createViajeRecord(record);
 
       setRecords((current) => [createdRecord, ...current]);
-      setActiveSection("reportes");
+      return createdRecord;
     } catch (error) {
       console.error("[Viajes] create failed", error, record);
       setSaveRecordError("No se pudo guardar el viaje en el API.");
