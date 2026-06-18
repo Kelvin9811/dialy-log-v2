@@ -18,7 +18,6 @@ export const getViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -45,7 +44,6 @@ export const listViajes = /* GraphQL */ `
         placaVehiculo
         createdAt
         updatedAt
-        owner
         __typename
       }
       nextToken
@@ -63,7 +61,6 @@ export const getCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -83,7 +80,6 @@ export const listCatalogoItems = /* GraphQL */ `
         descripcion
         createdAt
         updatedAt
-        owner
         __typename
       }
       nextToken
@@ -123,7 +119,6 @@ export const viajesPorFecha = /* GraphQL */ `
         placaVehiculo
         createdAt
         updatedAt
-        owner
         __typename
       }
       nextToken
@@ -163,7 +158,6 @@ export const viajesPorEstado = /* GraphQL */ `
         placaVehiculo
         createdAt
         updatedAt
-        owner
         __typename
       }
       nextToken
@@ -196,7 +190,6 @@ export const catalogosPorTipo = /* GraphQL */ `
         descripcion
         createdAt
         updatedAt
-        owner
         __typename
       }
       nextToken

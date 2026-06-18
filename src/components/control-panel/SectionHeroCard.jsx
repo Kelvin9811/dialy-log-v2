@@ -493,16 +493,16 @@ function ReportsPreview({
 
       <div className="reports-summary-grid">
         <div className="report-summary-card">
-          <span>Total registros</span>
+          <span>Total viajes filtrados</span>
           <strong>{filteredRecords.length}</strong>
         </div>
         <div className="report-summary-card">
-          <span>Entregados</span>
-          <strong>{filteredRecords.filter((record) => record.estado === "Entregado").length}</strong>
-        </div>
-        <div className="report-summary-card">
-          <span>Pendientes</span>
-          <strong>{filteredRecords.filter((record) => record.estado === "Pendiente").length}</strong>
+          <span>Total a cobrar</span>
+          <strong>
+            {filteredRecords
+              .reduce((total, record) => total + (Number.parseFloat(record.valorMonto) || 0), 0)
+              .toFixed(2)}
+          </strong>
         </div>
       </div>
 

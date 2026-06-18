@@ -21,7 +21,6 @@ export const createViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -46,7 +45,6 @@ export const updateViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -71,7 +69,6 @@ export const deleteViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -89,7 +86,6 @@ export const createCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -107,7 +103,6 @@ export const updateCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -125,7 +120,6 @@ export const deleteCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }

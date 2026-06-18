@@ -2,11 +2,8 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateViaje = /* GraphQL */ `
-  subscription OnCreateViaje(
-    $filter: ModelSubscriptionViajeFilterInput
-    $owner: String
-  ) {
-    onCreateViaje(filter: $filter, owner: $owner) {
+  subscription OnCreateViaje($filter: ModelSubscriptionViajeFilterInput) {
+    onCreateViaje(filter: $filter) {
       id
       fecha
       dia
@@ -21,17 +18,13 @@ export const onCreateViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
 `;
 export const onUpdateViaje = /* GraphQL */ `
-  subscription OnUpdateViaje(
-    $filter: ModelSubscriptionViajeFilterInput
-    $owner: String
-  ) {
-    onUpdateViaje(filter: $filter, owner: $owner) {
+  subscription OnUpdateViaje($filter: ModelSubscriptionViajeFilterInput) {
+    onUpdateViaje(filter: $filter) {
       id
       fecha
       dia
@@ -46,17 +39,13 @@ export const onUpdateViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
 `;
 export const onDeleteViaje = /* GraphQL */ `
-  subscription OnDeleteViaje(
-    $filter: ModelSubscriptionViajeFilterInput
-    $owner: String
-  ) {
-    onDeleteViaje(filter: $filter, owner: $owner) {
+  subscription OnDeleteViaje($filter: ModelSubscriptionViajeFilterInput) {
+    onDeleteViaje(filter: $filter) {
       id
       fecha
       dia
@@ -71,7 +60,6 @@ export const onDeleteViaje = /* GraphQL */ `
       placaVehiculo
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -79,9 +67,8 @@ export const onDeleteViaje = /* GraphQL */ `
 export const onCreateCatalogoItem = /* GraphQL */ `
   subscription OnCreateCatalogoItem(
     $filter: ModelSubscriptionCatalogoItemFilterInput
-    $owner: String
   ) {
-    onCreateCatalogoItem(filter: $filter, owner: $owner) {
+    onCreateCatalogoItem(filter: $filter) {
       id
       tipo
       nombre
@@ -89,7 +76,6 @@ export const onCreateCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -97,9 +83,8 @@ export const onCreateCatalogoItem = /* GraphQL */ `
 export const onUpdateCatalogoItem = /* GraphQL */ `
   subscription OnUpdateCatalogoItem(
     $filter: ModelSubscriptionCatalogoItemFilterInput
-    $owner: String
   ) {
-    onUpdateCatalogoItem(filter: $filter, owner: $owner) {
+    onUpdateCatalogoItem(filter: $filter) {
       id
       tipo
       nombre
@@ -107,7 +92,6 @@ export const onUpdateCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -115,9 +99,8 @@ export const onUpdateCatalogoItem = /* GraphQL */ `
 export const onDeleteCatalogoItem = /* GraphQL */ `
   subscription OnDeleteCatalogoItem(
     $filter: ModelSubscriptionCatalogoItemFilterInput
-    $owner: String
   ) {
-    onDeleteCatalogoItem(filter: $filter, owner: $owner) {
+    onDeleteCatalogoItem(filter: $filter) {
       id
       tipo
       nombre
@@ -125,7 +108,6 @@ export const onDeleteCatalogoItem = /* GraphQL */ `
       descripcion
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
