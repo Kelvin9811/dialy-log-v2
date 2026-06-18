@@ -56,6 +56,7 @@ const getInitialFormValues = () => ({
   estadoNuevo: "",
   observaciones: "",
   valorMonto: "",
+  adelanto: "",
   numeroPedidos: "",
   placaVehiculo: "",
   placaVehiculoNueva: "",
@@ -71,6 +72,7 @@ const mapRecordToEditValues = (record) => ({
   estado: record.estado ?? "",
   observaciones: record.observaciones ?? "",
   valorMonto: record.valorMonto ?? "",
+  adelanto: record.adelanto ?? "",
   numeroPedidos: record.numeroPedidos ?? "",
   placaVehiculo: record.placaVehiculo ?? "",
 });
@@ -231,6 +233,18 @@ function EditRecordModal({
                 min="0"
                 step="0.01"
                 value={editValues.valorMonto}
+                onChange={onChange}
+              />
+            </label>
+
+            <label className="form-field">
+              <span>Adelanto</span>
+              <input
+                name="adelanto"
+                type="number"
+                min="0"
+                step="0.01"
+                value={editValues.adelanto}
                 onChange={onChange}
               />
             </label>
@@ -439,6 +453,7 @@ function ReportsPreview({
               <th>Estado</th>
               <th>Pedidos</th>
               <th>Valor</th>
+              <th>Adelanto</th>
               <th>Placa</th>
               <th>Acciones</th>
             </tr>
@@ -454,6 +469,7 @@ function ReportsPreview({
                 <td>{record.estado || "-"}</td>
                 <td>{record.numeroPedidos || "-"}</td>
                 <td>{record.valorMonto || "-"}</td>
+                <td>{record.adelanto || "-"}</td>
                 <td>{record.placaVehiculo || "-"}</td>
                 <td>
                   <div className="table-actions">
@@ -478,7 +494,7 @@ function ReportsPreview({
             ))}
             {filteredRecords.length === 0 ? (
               <tr>
-                <td colSpan="10" className="empty-report-cell">
+                <td colSpan="11" className="empty-report-cell">
                   {isLoadingRecords
                     ? "Cargando registros..."
                     : recordsError
@@ -762,6 +778,7 @@ function SectionHeroCard({
       observaciones: formValues.observaciones.trim(),
       valorMonto: formValues.valorMonto,
       numeroPedidos: formValues.numeroPedidos,
+      adelanto: formValues.adelanto,
       placaVehiculo: resolveFieldValue(
         formValues.placaVehiculo,
         formValues.placaVehiculoNueva
@@ -886,6 +903,18 @@ function SectionHeroCard({
                   min="0"
                   step="0.01"
                   value={formValues.valorMonto}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label className="form-field">
+                <span>Adelanto</span>
+                <input
+                  name="adelanto"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formValues.adelanto}
                   onChange={handleChange}
                 />
               </label>

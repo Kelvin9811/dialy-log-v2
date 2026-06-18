@@ -20,6 +20,7 @@ type Viaje
   estado: String! @index(name: "viajesPorEstado", queryField: "viajesPorEstado", sortKeyFields: ["fecha"])
   observaciones: String
   valorMonto: Float
+  adelanto: Float
   numeroPedidos: Int
   placaVehiculo: String
 }

@@ -14,6 +14,8 @@ const mapViajeFromApi = (viaje) => ({
   observaciones: viaje.observaciones ?? "",
   valorMonto:
     viaje.valorMonto === null || viaje.valorMonto === undefined ? "" : String(viaje.valorMonto),
+  adelanto:
+    viaje.adelanto === null || viaje.adelanto === undefined ? "" : String(viaje.adelanto),
   numeroPedidos:
     viaje.numeroPedidos === null || viaje.numeroPedidos === undefined
       ? ""
@@ -85,6 +87,7 @@ const mapViajeToCreateInput = (viaje) => ({
   estado: viaje.estado.trim(),
   observaciones: toNullableString(viaje.observaciones),
   valorMonto: toNullableFloat(viaje.valorMonto),
+  adelanto: toNullableFloat(viaje.adelanto),
   numeroPedidos: toNullableInt(viaje.numeroPedidos),
   placaVehiculo: toNullableString(viaje.placaVehiculo),
 });
