@@ -9,7 +9,7 @@ enum CatalogoTipo {
 
 type Viaje
   @model
-  @auth(rules: [{ allow: owner }]) {
+  @auth(rules: [{ allow: private }]) {
   id: ID!
   fecha: AWSDate! @index(name: "viajesPorFecha", queryField: "viajesPorFecha", sortKeyFields: ["estado"])
   dia: String
@@ -26,7 +26,7 @@ type Viaje
 
 type CatalogoItem
   @model
-  @auth(rules: [{ allow: owner }]) {
+  @auth(rules: [{ allow: private }]) {
   id: ID!
   tipo: CatalogoTipo! @index(name: "catalogosPorTipo", queryField: "catalogosPorTipo", sortKeyFields: ["nombre"])
   nombre: String!
