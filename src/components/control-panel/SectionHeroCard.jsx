@@ -701,6 +701,7 @@ function SectionHeroCard({
   const isReportsSection = currentSection.id === "reportes";
   const isCatalogsSection = currentSection.id === "catalogos";
   const [formValues, setFormValues] = useState(getInitialFormValues);
+  const [recordValidationError, setRecordValidationError] = useState("");
 
   const clientOptions = useMemo(
     () => [...(catalogs.clientes ?? []).map((item) => item.name), "__new__"],
@@ -767,7 +768,25 @@ function SectionHeroCard({
       ),
     };
 
+    if (!record.clienteEmpresa || !record.rutaDestino || !record.estado) {
+      const missingFields = [
+        !record.clienteEmpresa ? "cliente/empresa" : null,
+        !record.rutaDestino ? "ruta/destino" : null,
+        !record.estado ? "estado" : null,
+      ].filter(Boolean);
+
+      console.warn("[Viajes] create blocked: missing required fields", {
+        missingFields,
+        record,
+      });
+      setRecordValidationError(
+        `Completa los campos requeridos: ${missingFields.join(", ")}.`
+      );
+      return;
+    }
+
     try {
+      setRecordValidationError("");
       await onSaveRecord?.(record);
       setFormValues(getInitialFormValues());
     } catch (error) {
@@ -785,6 +804,9 @@ function SectionHeroCard({
           {isLoadingCatalogs ? <p className="status-message">Cargando catalogos...</p> : null}
           {!isLoadingCatalogs && catalogsError ? (
             <p className="status-message error">{catalogsError}</p>
+          ) : null}
+          {recordValidationError ? (
+            <p className="status-message error">{recordValidationError}</p>
           ) : null}
           {saveRecordError ? <p className="status-message error">{saveRecordError}</p> : null}
 

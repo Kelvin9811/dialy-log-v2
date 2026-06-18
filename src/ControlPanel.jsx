@@ -132,11 +132,13 @@ function ControlPanel({ onLogout }) {
     setSaveRecordError("");
 
     try {
+      console.debug("[Viajes] create payload", record);
       const createdRecord = await createViajeRecord(record);
 
       setRecords((current) => [createdRecord, ...current]);
       setActiveSection("reportes");
     } catch (error) {
+      console.error("[Viajes] create failed", error, record);
       setSaveRecordError("No se pudo guardar el viaje en el API.");
       throw error;
     } finally {
@@ -180,6 +182,8 @@ function ControlPanel({ onLogout }) {
     const trimmedName = itemName.trim();
 
     if (!trimmedName) {
+      console.warn("[Catalogos] create blocked: empty name", { catalogKey, itemName });
+      setCatalogOperationError("Debes ingresar un nombre para el catalogo.");
       return;
     }
 
@@ -207,6 +211,8 @@ function ControlPanel({ onLogout }) {
     const trimmedName = itemName.trim();
 
     if (!trimmedName) {
+      console.warn("[Catalogos] update blocked: empty name", { catalogKey, itemId, itemName });
+      setCatalogOperationError("Debes ingresar un nombre para actualizar el catalogo.");
       return;
     }
 
