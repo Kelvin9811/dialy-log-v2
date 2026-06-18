@@ -415,6 +415,15 @@
   border-bottom: 0;
 }
 
+.report-row {
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.report-row:hover td {
+  background: rgba(255, 248, 232, 0.72);
+}
+
 .table-actions {
   display: flex;
   gap: 8px;

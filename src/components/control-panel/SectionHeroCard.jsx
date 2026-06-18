@@ -446,12 +446,8 @@ function ReportsPreview({
           <thead>
             <tr>
               <th>Fecha</th>
-              <th>Dia</th>
               <th>Cliente</th>
               <th>Ruta</th>
-              <th>Responsable</th>
-              <th>Estado</th>
-              <th>Pedidos</th>
               <th>Valor</th>
               <th>Adelanto</th>
               <th>Placa</th>
@@ -460,14 +456,14 @@ function ReportsPreview({
           </thead>
           <tbody>
             {filteredRecords.map((record) => (
-              <tr key={record.id}>
+              <tr
+                key={record.id}
+                className="report-row"
+                onClick={() => setEditingRecord(mapRecordToEditValues(record))}
+              >
                 <td>{record.fecha || "-"}</td>
-                <td>{record.dia || "-"}</td>
                 <td>{record.clienteEmpresa || "-"}</td>
                 <td>{record.rutaDestino || "-"}</td>
-                <td>{record.responsableAsignado || "-"}</td>
-                <td>{record.estado || "-"}</td>
-                <td>{record.numeroPedidos || "-"}</td>
                 <td>{record.valorMonto || "-"}</td>
                 <td>{record.adelanto || "-"}</td>
                 <td>{record.placaVehiculo || "-"}</td>
@@ -476,7 +472,10 @@ function ReportsPreview({
                     <button
                       className="icon-action edit-action"
                       type="button"
-                      onClick={() => setEditingRecord(mapRecordToEditValues(record))}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setEditingRecord(mapRecordToEditValues(record));
+                      }}
                     >
                       E
                     </button>
@@ -484,7 +483,10 @@ function ReportsPreview({
                       className="icon-action delete-action"
                       type="button"
                       disabled={isDeletingRecord}
-                      onClick={() => handleDelete(record.id)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleDelete(record.id);
+                      }}
                     >
                       {isDeletingRecord ? "..." : "X"}
                     </button>
@@ -494,7 +496,7 @@ function ReportsPreview({
             ))}
             {filteredRecords.length === 0 ? (
               <tr>
-                <td colSpan="11" className="empty-report-cell">
+                <td colSpan="7" className="empty-report-cell">
                   {isLoadingRecords
                     ? "Cargando registros..."
                     : recordsError
