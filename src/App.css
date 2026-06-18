@@ -13,6 +13,10 @@
   padding: 24px;
 }
 
+.auth-wrapper > * {
+  width: 100%;
+}
+
 .login-layout {
   width: min(1080px, 100%);
   margin: 0 auto;
@@ -134,7 +138,12 @@
 
 @media (max-width: 640px) {
   .login-shell {
-    padding: 16px;
+    padding: 0;
+  }
+
+  .auth-wrapper {
+    min-height: 100vh;
+    padding: 0;
   }
 
   .login-hero,

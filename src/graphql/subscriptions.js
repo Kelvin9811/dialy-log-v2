@@ -14,6 +14,7 @@ export const onCreateViaje = /* GraphQL */ `
       estado
       observaciones
       valorMonto
+      adelanto
       numeroPedidos
       placaVehiculo
       createdAt
@@ -35,6 +36,7 @@ export const onUpdateViaje = /* GraphQL */ `
       estado
       observaciones
       valorMonto
+      adelanto
       numeroPedidos
       placaVehiculo
       createdAt
@@ -56,6 +58,7 @@ export const onDeleteViaje = /* GraphQL */ `
       estado
       observaciones
       valorMonto
+      adelanto
       numeroPedidos
       placaVehiculo
       createdAt

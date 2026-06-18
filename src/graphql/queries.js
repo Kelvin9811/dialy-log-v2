@@ -14,6 +14,7 @@ export const getViaje = /* GraphQL */ `
       estado
       observaciones
       valorMonto
+      adelanto
       numeroPedidos
       placaVehiculo
       createdAt
@@ -40,6 +41,7 @@ export const listViajes = /* GraphQL */ `
         estado
         observaciones
         valorMonto
+        adelanto
         numeroPedidos
         placaVehiculo
         createdAt
@@ -115,6 +117,7 @@ export const viajesPorFecha = /* GraphQL */ `
         estado
         observaciones
         valorMonto
+        adelanto
         numeroPedidos
         placaVehiculo
         createdAt
@@ -154,6 +157,7 @@ export const viajesPorEstado = /* GraphQL */ `
         estado
         observaciones
         valorMonto
+        adelanto
         numeroPedidos
         placaVehiculo
         createdAt
