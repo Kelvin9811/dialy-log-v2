@@ -16,6 +16,8 @@ export const onCreateViaje = /* GraphQL */ `
       valorMonto
       adelanto
       numeroPedidos
+      pesoKg
+      numeroGuia
       placaVehiculo
       createdAt
       updatedAt
@@ -38,6 +40,8 @@ export const onUpdateViaje = /* GraphQL */ `
       valorMonto
       adelanto
       numeroPedidos
+      pesoKg
+      numeroGuia
       placaVehiculo
       createdAt
       updatedAt
@@ -60,6 +64,8 @@ export const onDeleteViaje = /* GraphQL */ `
       valorMonto
       adelanto
       numeroPedidos
+      pesoKg
+      numeroGuia
       placaVehiculo
       createdAt
       updatedAt

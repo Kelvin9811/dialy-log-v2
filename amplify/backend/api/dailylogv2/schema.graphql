@@ -22,6 +22,8 @@ type Viaje
   valorMonto: Float
   adelanto: Float
   numeroPedidos: Int
+  pesoKg: Float
+  numeroGuia: String
   placaVehiculo: String
 }
 

@@ -20,6 +20,8 @@ const mapViajeFromApi = (viaje) => ({
     viaje.numeroPedidos === null || viaje.numeroPedidos === undefined
       ? ""
       : String(viaje.numeroPedidos),
+  pesoKg: viaje.pesoKg === null || viaje.pesoKg === undefined ? "" : String(viaje.pesoKg),
+  numeroGuia: viaje.numeroGuia ?? "",
   placaVehiculo: viaje.placaVehiculo ?? "",
   createdAt: viaje.createdAt ?? "",
   updatedAt: viaje.updatedAt ?? "",
@@ -89,6 +91,8 @@ const mapViajeToCreateInput = (viaje) => ({
   valorMonto: toNullableFloat(viaje.valorMonto),
   adelanto: toNullableFloat(viaje.adelanto),
   numeroPedidos: toNullableInt(viaje.numeroPedidos),
+  pesoKg: toNullableFloat(viaje.pesoKg),
+  numeroGuia: toNullableString(viaje.numeroGuia),
   placaVehiculo: toNullableString(viaje.placaVehiculo),
 });
 

@@ -11,6 +11,8 @@ const dayNames = [
   "Sabado",
 ];
 
+const DEFAULT_STATUS = "Pendiente";
+
 const getToday = () => {
   const now = new Date();
   const year = now.getFullYear();
@@ -52,12 +54,14 @@ const getInitialFormValues = () => ({
   subrutaPuntoLocalNueva: "",
   responsableAsignado: "",
   responsableAsignadoNuevo: "",
-  estado: "",
+  estado: DEFAULT_STATUS,
   estadoNuevo: "",
   observaciones: "",
   valorMonto: "",
   adelanto: "",
   numeroPedidos: "",
+  pesoKg: "",
+  numeroGuia: "",
   placaVehiculo: "",
   placaVehiculoNueva: "",
 });
@@ -74,6 +78,8 @@ const mapRecordToEditValues = (record) => ({
   valorMonto: record.valorMonto ?? "",
   adelanto: record.adelanto ?? "",
   numeroPedidos: record.numeroPedidos ?? "",
+  pesoKg: record.pesoKg ?? "",
+  numeroGuia: record.numeroGuia ?? "",
   placaVehiculo: record.placaVehiculo ?? "",
 });
 
@@ -257,6 +263,28 @@ function EditRecordModal({
                 min="0"
                 step="1"
                 value={editValues.numeroPedidos}
+                onChange={onChange}
+              />
+            </label>
+
+            <label className="form-field">
+              <span>Peso (kg)</span>
+              <input
+                name="pesoKg"
+                type="number"
+                min="0"
+                step="0.01"
+                value={editValues.pesoKg}
+                onChange={onChange}
+              />
+            </label>
+
+            <label className="form-field">
+              <span>Numero de guia</span>
+              <input
+                name="numeroGuia"
+                type="text"
+                value={editValues.numeroGuia}
                 onChange={onChange}
               />
             </label>
@@ -448,6 +476,8 @@ function ReportsPreview({
               <th>Fecha</th>
               <th>Cliente</th>
               <th>Ruta</th>
+              <th>Guia</th>
+              <th>Peso (kg)</th>
               <th>Valor</th>
               <th>Adelanto</th>
               <th>Placa</th>
@@ -464,6 +494,8 @@ function ReportsPreview({
                 <td>{record.fecha || "-"}</td>
                 <td>{record.clienteEmpresa || "-"}</td>
                 <td>{record.rutaDestino || "-"}</td>
+                <td>{record.numeroGuia || "-"}</td>
+                <td>{record.pesoKg || "-"}</td>
                 <td>{record.valorMonto || "-"}</td>
                 <td>{record.adelanto || "-"}</td>
                 <td>{record.placaVehiculo || "-"}</td>
@@ -496,7 +528,7 @@ function ReportsPreview({
             ))}
             {filteredRecords.length === 0 ? (
               <tr>
-                <td colSpan="7" className="empty-report-cell">
+                <td colSpan="9" className="empty-report-cell">
                   {isLoadingRecords
                     ? "Cargando registros..."
                     : recordsError
@@ -719,7 +751,6 @@ function SectionHeroCard({
   const isReportsSection = currentSection.id === "reportes";
   const isCatalogsSection = currentSection.id === "catalogos";
   const [formValues, setFormValues] = useState(getInitialFormValues);
-  const [recordValidationError, setRecordValidationError] = useState("");
 
   const clientOptions = useMemo(
     () => [...(catalogs.clientes ?? []).map((item) => item.name), "__new__"],
@@ -738,7 +769,16 @@ function SectionHeroCard({
     [catalogs]
   );
   const statusOptions = useMemo(
-    () => [...(catalogs.estados ?? []).map((item) => item.name), "__new__"],
+    () => {
+      const catalogStatusOptions = (catalogs.estados ?? []).map((item) => item.name);
+
+      return [
+        ...(catalogStatusOptions.includes(DEFAULT_STATUS)
+          ? catalogStatusOptions
+          : [DEFAULT_STATUS, ...catalogStatusOptions]),
+        "__new__",
+      ];
+    },
     [catalogs]
   );
   const vehicleOptions = useMemo(
@@ -780,6 +820,8 @@ function SectionHeroCard({
       observaciones: formValues.observaciones.trim(),
       valorMonto: formValues.valorMonto,
       numeroPedidos: formValues.numeroPedidos,
+      pesoKg: formValues.pesoKg,
+      numeroGuia: formValues.numeroGuia,
       adelanto: formValues.adelanto,
       placaVehiculo: resolveFieldValue(
         formValues.placaVehiculo,
@@ -787,30 +829,12 @@ function SectionHeroCard({
       ),
     };
 
-    if (!record.clienteEmpresa || !record.rutaDestino || !record.estado) {
-      const missingFields = [
-        !record.clienteEmpresa ? "cliente/empresa" : null,
-        !record.rutaDestino ? "ruta/destino" : null,
-        !record.estado ? "estado" : null,
-      ].filter(Boolean);
-
-      console.warn("[Viajes] create blocked: missing required fields", {
-        missingFields,
-        record,
-      });
-      setRecordValidationError(
-        `Completa los campos requeridos: ${missingFields.join(", ")}.`
-      );
-      return;
-    }
-
     try {
-      setRecordValidationError("");
       const createdRecord = await onSaveRecord?.(record);
-      window.alert(
-        `Guardado de viaje al destino ${createdRecord?.rutaDestino ?? record.rutaDestino} exitoso.`
-      );
+      const savedRoute = createdRecord?.rutaDestino ?? record.rutaDestino;
+      window.alert(savedRoute ? `Guardado de viaje al destino ${savedRoute} exitoso.` : "Registro guardado exitosamente.");
       setFormValues(getInitialFormValues());
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       // The error message is rendered by the parent container.
     }
@@ -827,9 +851,6 @@ function SectionHeroCard({
           {!isLoadingCatalogs && catalogsError ? (
             <p className="status-message error">{catalogsError}</p>
           ) : null}
-          {recordValidationError ? (
-            <p className="status-message error">{recordValidationError}</p>
-          ) : null}
           {saveRecordError ? <p className="status-message error">{saveRecordError}</p> : null}
 
           <form className="registro-form" onSubmit={handleSubmit}>
@@ -839,7 +860,6 @@ function SectionHeroCard({
                 <input
                   name="fecha"
                   type="date"
-                  required
                   value={formValues.fecha}
                   onChange={handleChange}
                 />
@@ -932,6 +952,28 @@ function SectionHeroCard({
                   min="0"
                   step="1"
                   value={formValues.numeroPedidos}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label className="form-field">
+                <span>Peso (kg)</span>
+                <input
+                  name="pesoKg"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formValues.pesoKg}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label className="form-field">
+                <span>Numero de guia</span>
+                <input
+                  name="numeroGuia"
+                  type="text"
+                  value={formValues.numeroGuia}
                   onChange={handleChange}
                 />
               </label>
