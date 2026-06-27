@@ -44,6 +44,39 @@ const resolveFieldValue = (selectedValue, customValue) => {
   return selectedValue;
 };
 
+const comboCatalogFields = [
+  {
+    catalogKey: "clientes",
+    selectName: "clienteEmpresa",
+    inputName: "clienteEmpresaNuevo",
+  },
+  {
+    catalogKey: "rutas",
+    selectName: "rutaDestino",
+    inputName: "rutaDestinoNueva",
+  },
+  {
+    catalogKey: "subrutas",
+    selectName: "subrutaPuntoLocal",
+    inputName: "subrutaPuntoLocalNueva",
+  },
+  {
+    catalogKey: "responsables",
+    selectName: "responsableAsignado",
+    inputName: "responsableAsignadoNuevo",
+  },
+  {
+    catalogKey: "estados",
+    selectName: "estado",
+    inputName: "estadoNuevo",
+  },
+  {
+    catalogKey: "vehiculos",
+    selectName: "placaVehiculo",
+    inputName: "placaVehiculoNueva",
+  },
+];
+
 const getInitialFormValues = () => ({
   fecha: getToday(),
   clienteEmpresa: "",
@@ -800,6 +833,14 @@ function SectionHeroCard({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const newCatalogEntries = comboCatalogFields
+      .filter(({ selectName, inputName }) => formValues[selectName] === "__new__")
+      .map(({ catalogKey, inputName }) => ({
+        catalogKey,
+        name: formValues[inputName].trim(),
+      }))
+      .filter(({ name }) => name);
+
     const record = {
       fecha: formValues.fecha,
       dia: currentDay,
@@ -830,6 +871,10 @@ function SectionHeroCard({
     };
 
     try {
+      await Promise.all(
+        newCatalogEntries.map(({ catalogKey, name }) => onCreateCatalogItem?.(catalogKey, name))
+      );
+
       const createdRecord = await onSaveRecord?.(record);
       const savedRoute = createdRecord?.rutaDestino ?? record.rutaDestino;
       window.alert(savedRoute ? `Guardado de viaje al destino ${savedRoute} exitoso.` : "Registro guardado exitosamente.");

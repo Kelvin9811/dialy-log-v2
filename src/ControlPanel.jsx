@@ -187,6 +187,14 @@ function ControlPanel({ onLogout }) {
       return;
     }
 
+    const existingItem = (catalogs[catalogKey] ?? []).find(
+      (item) => item.name.trim().toLowerCase() === trimmedName.toLowerCase()
+    );
+
+    if (existingItem) {
+      return existingItem;
+    }
+
     setIsSavingCatalogItem(true);
     setCatalogOperationError("");
 
