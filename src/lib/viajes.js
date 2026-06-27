@@ -2,6 +2,23 @@ import amplifyApiClient from "./amplifyApi.js";
 import { listViajes } from "../graphql/queries.js";
 import { createViaje, deleteViaje, updateViaje } from "../graphql/mutations.js";
 
+const normalizePlateValue = (value) => {
+  const trimmedValue = value?.trim?.() ?? "";
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const sanitizedValue = trimmedValue.replace(/\s+/g, "").toUpperCase();
+  const [, letters = "", numbers = ""] = sanitizedValue.match(/^([A-Z]+)(\d+)$/) ?? [];
+
+  if (!letters && !numbers) {
+    return sanitizedValue;
+  }
+
+  return numbers ? `${letters}-${numbers}` : letters;
+};
+
 const mapViajeFromApi = (viaje) => ({
   id: viaje.id,
   fecha: viaje.fecha ?? "",
@@ -93,7 +110,7 @@ const mapViajeToCreateInput = (viaje) => ({
   numeroPedidos: toNullableInt(viaje.numeroPedidos),
   pesoKg: toNullableFloat(viaje.pesoKg),
   numeroGuia: toNullableString(viaje.numeroGuia),
-  placaVehiculo: toNullableString(viaje.placaVehiculo),
+  placaVehiculo: toNullableString(normalizePlateValue(viaje.placaVehiculo)),
 });
 
 const mapViajeToUpdateInput = (viaje) => ({

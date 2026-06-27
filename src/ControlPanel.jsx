@@ -18,6 +18,40 @@ import {
 } from "./lib/viajes.js";
 import "./ControlPanel.css";
 
+const toTitleCase = (value) =>
+  value
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+
+const normalizePlateValue = (value) => {
+  const sanitizedValue = value.replace(/\s+/g, "").toUpperCase();
+  const [, letters = "", numbers = ""] = sanitizedValue.match(/^([A-Z]+)(\d+)$/) ?? [];
+
+  if (!letters && !numbers) {
+    return sanitizedValue;
+  }
+
+  return numbers ? `${letters}-${numbers}` : letters;
+};
+
+const normalizeCatalogItemName = (catalogKey, value) => {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  if (catalogKey === "vehiculos") {
+    return normalizePlateValue(trimmedValue);
+  }
+
+  return toTitleCase(trimmedValue);
+};
+
 function ControlPanel({ onLogout }) {
   const [activeSection, setActiveSection] = useState(controlPanelSections[0].id);
   const [isSidebarCollapsed] = useState(false);
@@ -179,7 +213,7 @@ function ControlPanel({ onLogout }) {
   };
 
   const handleCreateCatalogItem = async (catalogKey, itemName) => {
-    const trimmedName = itemName.trim();
+    const trimmedName = normalizeCatalogItemName(catalogKey, itemName);
 
     if (!trimmedName) {
       console.warn("[Catalogos] create blocked: empty name", { catalogKey, itemName });
@@ -216,7 +250,7 @@ function ControlPanel({ onLogout }) {
   };
 
   const handleUpdateCatalogItem = async (catalogKey, itemId, itemName) => {
-    const trimmedName = itemName.trim();
+    const trimmedName = normalizeCatalogItemName(catalogKey, itemName);
 
     if (!trimmedName) {
       console.warn("[Catalogos] update blocked: empty name", { catalogKey, itemId, itemName });

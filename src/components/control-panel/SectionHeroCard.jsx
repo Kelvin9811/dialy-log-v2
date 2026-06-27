@@ -44,6 +44,40 @@ const resolveFieldValue = (selectedValue, customValue) => {
   return selectedValue;
 };
 
+const toTitleCase = (value) =>
+  value
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+
+const normalizePlateValue = (value) => {
+  const sanitizedValue = value.replace(/\s+/g, "").toUpperCase();
+  const [, letters = "", numbers = ""] = sanitizedValue.match(/^([A-Z]+)(\d+)$/) ?? [];
+
+  if (!letters && !numbers) {
+    return sanitizedValue;
+  }
+
+  return numbers ? `${letters}-${numbers}` : letters;
+};
+
+const normalizeCatalogValue = (catalogKey, value) => {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  if (catalogKey === "vehiculos") {
+    return normalizePlateValue(trimmedValue);
+  }
+
+  return toTitleCase(trimmedValue);
+};
+
 const comboCatalogFields = [
   {
     catalogKey: "clientes",
@@ -837,37 +871,43 @@ function SectionHeroCard({
       .filter(({ selectName, inputName }) => formValues[selectName] === "__new__")
       .map(({ catalogKey, inputName }) => ({
         catalogKey,
-        name: formValues[inputName].trim(),
+        name: normalizeCatalogValue(catalogKey, formValues[inputName]),
       }))
       .filter(({ name }) => name);
 
     const record = {
       fecha: formValues.fecha,
       dia: currentDay,
-      clienteEmpresa: resolveFieldValue(
-        formValues.clienteEmpresa,
-        formValues.clienteEmpresaNuevo
-      ),
-      rutaDestino: resolveFieldValue(formValues.rutaDestino, formValues.rutaDestinoNueva),
-      subrutaPuntoLocal: resolveFieldValue(
-        formValues.subrutaPuntoLocal,
-        formValues.subrutaPuntoLocalNueva
-      ),
-      responsableAsignado: resolveFieldValue(
-        formValues.responsableAsignado,
-        formValues.responsableAsignadoNuevo
-      ),
-      estado: resolveFieldValue(formValues.estado, formValues.estadoNuevo),
+      clienteEmpresa:
+        formValues.clienteEmpresa === "__new__"
+          ? normalizeCatalogValue("clientes", formValues.clienteEmpresaNuevo)
+          : resolveFieldValue(formValues.clienteEmpresa, formValues.clienteEmpresaNuevo),
+      rutaDestino:
+        formValues.rutaDestino === "__new__"
+          ? normalizeCatalogValue("rutas", formValues.rutaDestinoNueva)
+          : resolveFieldValue(formValues.rutaDestino, formValues.rutaDestinoNueva),
+      subrutaPuntoLocal:
+        formValues.subrutaPuntoLocal === "__new__"
+          ? normalizeCatalogValue("subrutas", formValues.subrutaPuntoLocalNueva)
+          : resolveFieldValue(formValues.subrutaPuntoLocal, formValues.subrutaPuntoLocalNueva),
+      responsableAsignado:
+        formValues.responsableAsignado === "__new__"
+          ? normalizeCatalogValue("responsables", formValues.responsableAsignadoNuevo)
+          : resolveFieldValue(formValues.responsableAsignado, formValues.responsableAsignadoNuevo),
+      estado:
+        formValues.estado === "__new__"
+          ? normalizeCatalogValue("estados", formValues.estadoNuevo)
+          : resolveFieldValue(formValues.estado, formValues.estadoNuevo),
       observaciones: formValues.observaciones.trim(),
       valorMonto: formValues.valorMonto,
       numeroPedidos: formValues.numeroPedidos,
       pesoKg: formValues.pesoKg,
       numeroGuia: formValues.numeroGuia,
       adelanto: formValues.adelanto,
-      placaVehiculo: resolveFieldValue(
-        formValues.placaVehiculo,
-        formValues.placaVehiculoNueva
-      ),
+      placaVehiculo:
+        formValues.placaVehiculo === "__new__"
+          ? normalizeCatalogValue("vehiculos", formValues.placaVehiculoNueva)
+          : resolveFieldValue(formValues.placaVehiculo, formValues.placaVehiculoNueva),
     };
 
     try {
